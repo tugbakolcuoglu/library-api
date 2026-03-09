@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore; 
 using WebApplication2.Data;
+using WebApplication2.Repository;
+using WebApplication2.Repository.Interfaces;
 using WebApplication2.Services;
+using WebApplication2.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +23,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<LibraryService>();
 //LibraryService'ı bağımlılık enjeksiyonuna ekliyoruz, böylece controller'larda kullanabiliriz.
 
-builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+builder.Services.AddScoped<IStudentService, StudentService>();
 
 var app = builder.Build();
 

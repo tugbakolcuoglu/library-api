@@ -3,52 +3,57 @@ using WebApplication2.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication2.DTOs;
+using WebApplication2.Services.Interfaces;
 
 namespace WebApplication2.Services;
 
 [ApiController]
 [Route("api/[controller]")]
-public class StudentController: ControllerBase
+public class StudentController(IStudentService studentService) : ControllerBase
 {
-    private readonly StudentService _studentService;
-
-    public StudentController(StudentService studentService)
-    {
-        _studentService = studentService;
-    }
-
     [HttpPost("create")]
     public async Task<IActionResult> CreateStudent([FromBody] StudentDto studentDto)
     {
-        if (string.IsNullOrEmpty(studentDto.Username) || string.IsNullOrEmpty(studentDto.Email))
+        if (
+            string.IsNullOrEmpty(studentDto.Email) ||
+            string.IsNullOrEmpty(studentDto.Name) ||
+            string.IsNullOrEmpty(studentDto.Surname) ||
+            string.IsNullOrEmpty(studentDto.PhoneNumber)
+        )
         {
-            return BadRequest("Öğrenci adı ve email boş bırakılamaz.");
+            return BadRequest("Email is required");
         }
 
-        var student = new Student
-        {
-            Id = Guid.NewGuid(),
-            Name = studentDto.Username,
-            Email = studentDto.Email
-        };
+        var response = await studentService.CreateStudentAsync(studentDto);
 
-        var createdStudent = await _studentService.CreateStudentAsync(student);
-        return Ok(createdStudent);
-    }
-    
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] StudentLoginDto loginDto)
-    {
-        var student = await _studentService.LoginAsync(loginDto.Email, loginDto.Password);
-        if (student == null)
-            return BadRequest("Email veya şifre yanlış");
-        return Ok(student);
+        if (response is not null) return Ok();
+        
+        return BadRequest("Student could not be created");
     }
 
-    [HttpGet("list")]
-    public async Task<IActionResult> GetAllStudents()
-    {
-        var students = await _studentService.GetAllStudentsAsync();
-        return Ok(students);
-    }
+
+    // private readonly StudentService _studentService;
+    //
+    // public StudentController(StudentService studentService)
+    // {
+    //     _studentService = studentService;
+    // }
+    //
+
+    //
+    // [HttpPost("login")]
+    // public async Task<IActionResult> Login([FromBody] StudentLoginDto loginDto)
+    // {
+    //     var student = await _studentService.LoginAsync(loginDto.Email, loginDto.Password);
+    //     if (student == null)
+    //         return BadRequest("Email veya şifre yanlış");
+    //     return Ok(student);
+    // }
+    //
+    // [HttpGet("list")]
+    // public async Task<IActionResult> GetAllStudents()
+    // {
+    //     var students = await _studentService.GetAllStudentsAsync();
+    //     return Ok(students);
+    // }
 }

@@ -22,7 +22,7 @@ namespace WebApplication2.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("library-api.Entities.AssignmentHistory", b =>
+            modelBuilder.Entity("WebApplication2.Entities.AssignmentHistory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -49,7 +49,7 @@ namespace WebApplication2.Migrations
                     b.ToTable("AssignmentHistories");
                 });
 
-            modelBuilder.Entity("library-api.Entities.Book", b =>
+            modelBuilder.Entity("WebApplication2.Entities.Book", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -78,7 +78,7 @@ namespace WebApplication2.Migrations
                     b.ToTable("Books");
                 });
 
-            modelBuilder.Entity("library-api.Entities.Student", b =>
+            modelBuilder.Entity("WebApplication2.Entities.Student", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -89,10 +89,6 @@ namespace WebApplication2.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -109,18 +105,37 @@ namespace WebApplication2.Migrations
                     b.ToTable("Students");
                 });
 
-            modelBuilder.Entity("library-api.Entities.AssignmentHistory", b =>
+            modelBuilder.Entity("WebApplication2.Entities.User", b =>
                 {
-                    b.HasOne("library-api.Entities.Book", "Book")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("WebApplication2.Entities.AssignmentHistory", b =>
+                {
+                    b.HasOne("WebApplication2.Entities.Book", "Book")
                         .WithMany("AssignmentHistories")
                         .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("library-api.Entities.Student", "Student")
+                    b.HasOne("WebApplication2.Entities.Student", "Student")
                         .WithMany("AssignmentHistory")
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Book");
@@ -128,21 +143,22 @@ namespace WebApplication2.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("library-api.Entities.Book", b =>
+            modelBuilder.Entity("WebApplication2.Entities.Book", b =>
                 {
-                    b.HasOne("library-api.Entities.Student", "Student")
+                    b.HasOne("WebApplication2.Entities.Student", "Student")
                         .WithOne("Book")
-                        .HasForeignKey("library-api.Entities.Book", "StudentId");
+                        .HasForeignKey("WebApplication2.Entities.Book", "StudentId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("library-api.Entities.Book", b =>
+            modelBuilder.Entity("WebApplication2.Entities.Book", b =>
                 {
                     b.Navigation("AssignmentHistories");
                 });
 
-            modelBuilder.Entity("library-api.Entities.Student", b =>
+            modelBuilder.Entity("WebApplication2.Entities.Student", b =>
                 {
                     b.Navigation("AssignmentHistory");
 

@@ -3,15 +3,12 @@ using WebApplication2.Entities;
 
 namespace WebApplication2.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
-        }
-
         public DbSet<Student> Students { get; set; }
         public DbSet<Book> Books { get; set; }
         public DbSet<AssignmentHistory> AssignmentHistories { get; set; }
+        public DbSet<User> Users { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
