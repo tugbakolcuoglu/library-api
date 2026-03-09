@@ -2,33 +2,83 @@
 using WebApplication2.DTOs;
 using WebApplication2.Entities;
 using WebApplication2.Services;
+
 namespace WebApplication2.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class BooksController : ControllerBase
+public class BooksController(LibraryService libraryService) : ControllerBase
 {
-    private readonly LibraryService _libraryService;
-
-    public BooksController(LibraryService libraryService)
-    {
-        _libraryService = libraryService;
-    }
-
-    [HttpGet] 
+    // Tüm kitapları getir
+    [HttpGet]
     public async Task<IActionResult> GetAllBooks()
     {
-        var books = await _libraryService.GetAllBooksAsync();
+        var books = await libraryService.GetAllBooksAsync();
         return Ok(books);
     }
 
+    // Id ile kitap getir
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetBookById(Guid id)
+    {
+        var book = await libraryService.GetBookByIdAsync(id);
+        if (book == null)
+            return NotFound("Kitap bulunamadı");
+        return Ok(book);
+    }
+
+    // Kitap ekle
+    [HttpPost]
+    public async Task<IActionResult> CreateBook(Book book)
+    {
+        var createdBook = await libraryService.CreateBookAsync(book);
+        return Ok(createdBook);
+    }
+
+    // Kitap güncelle
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateBook(Guid id, Book updatedBook)
+    {
+        var book = await libraryService.UpdateBookAsync(id, updatedBook);
+        if (book == null)
+            return NotFound("Kitap bulunamadı");
+        return Ok(book);
+    }
+
+    // Kitap sil
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteBook(Guid id)
+    {
+        var result = await libraryService.DeleteBookAsync(id);
+        if (!result)
+            return NotFound("Kitap bulunamadı");
+        return Ok("Kitap silindi");
+    }
+
+    // Kitap isme göre ara
+    [HttpGet("search/name")]
+    public async Task<IActionResult> FindBooksByName([FromQuery] string name)
+    {
+        var books = await libraryService.FindBooksByNameAsync(name);
+        return Ok(books);
+    }
+
+    // Kitap yazara göre ara
+    [HttpGet("search/author")]
+    public async Task<IActionResult> FindBooksByAuthor([FromQuery] string author)
+    {
+        var books = await libraryService.FindBooksByAuthorNameAsync(author);
+        return Ok(books);
+    }
+
+    // Kitap ödünç ver
     [HttpPost("assign")]
-    public async Task<IActionResult> AssignBookToStudent([FromBody] AssignDto assignDto)
+    public async Task<IActionResult> AssignBook(Guid bookId, Guid studentId)
     {
         try
         {
-            await _libraryService.AssignBookToStudentAsync(assignDto.BookId, assignDto.StudentId);
-            return Ok("Book assigned successfully.");
+            await libraryService.AssignBookToStudentAsync(bookId, studentId);
+            return Ok("Kitap öğrenciye verildi");
         }
         catch (InvalidOperationException ex)
         {
@@ -36,68 +86,18 @@ public class BooksController : ControllerBase
         }
     }
 
-    [HttpPost("return/{bookId}")]
+    // Kitap iade
+    [HttpPost("return")]
     public async Task<IActionResult> ReturnBook(Guid bookId)
     {
         try
         {
-            await _libraryService.ReturnBookAsync(bookId);
-            var book = await _libraryService.GetBookByIdAsync(bookId);
-            var bookDto = new BookDto
-            {
-                Id = book.Id,
-                Title = book.Title,
-                Author = book.Author
-            };
-            return Ok(bookDto);
+            await libraryService.ReturnBookAsync(bookId);
+            return Ok("Kitap iade edildi");
         }
         catch (InvalidOperationException ex)
         {
             return BadRequest(ex.Message);
         }
-    }
-
-    [HttpPost("create")]
-    public async Task<IActionResult> CreateBook([FromBody] Book book)
-    {
-        if (string.IsNullOrEmpty(book.Title) || string.IsNullOrEmpty(book.Author))
-            return BadRequest("Title ve Author boş olamaz.");
-
-        var createdBook = await _libraryService.CreateBookAsync(book);
-        return Ok(createdBook);
-    }
-
-    [HttpDelete("delete/{id}")]
-    public async Task<IActionResult> DeleteBook(Guid id)
-    {
-        var result = await _libraryService.DeleteBookAsync(id);
-        if (!result)
-            return NotFound("Kitap bulunamadı.");
-
-        return Ok("Kitap silindi.");
-    }
-    
-    [HttpPut("update/{id}")]
-    public async Task<IActionResult> UpdateBook(Guid id, [FromBody] Book book)
-    {
-        var updatedBook = await _libraryService.UpdateBookAsync(id, book);
-        if (updatedBook == null)
-            return NotFound("Kitap bulunamadı.");
-
-        return Ok(updatedBook);
-    }
-    
-    [HttpGet("find-by-name")]
-    public async Task<IActionResult> FindBooksByName([FromQuery] string name)
-    {
-        var books = await _libraryService.FindBooksByNameAsync(name);
-        return Ok(books);
-    }
-
-    [HttpGet("find-by-author")]
-    public async Task<IActionResult> FindBooksByAuthorName([FromQuery] string authorName)
-    {
-        var books = await _libraryService.FindBooksByAuthorNameAsync(authorName);
-        return Ok(books);
     }
 }

@@ -9,12 +9,13 @@ namespace WebApplication2.Controllers;
 public class AuthController(IAuthService authService) : ControllerBase
 {
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+    public async Task<IActionResult> Login(LoginDto loginDto)
     {
-        var loginResponse = await authService.LoginAsync(loginDto);
+        var result = await authService.LoginAsync(loginDto);
 
-        if (loginResponse) return Ok();
+        if (!result)
+            return Unauthorized("Kullanıcı adı veya şifre hatalı");
 
-        return Unauthorized();
+        return Ok("Login başarılı");
     }
-}
+} 

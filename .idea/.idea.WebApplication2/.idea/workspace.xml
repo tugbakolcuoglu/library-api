@@ -8,7 +8,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eb179075-4d14-4aa0-8288-09340a65a6ad" name="Changes" comment="" />
+    <list default="true" id="eb179075-4d14-4aa0-8288-09340a65a6ad" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.WebApplication2/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.WebApplication2/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/library-api/Services/StudentController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/library-api/Controllers/StudentController.cs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,6 +28,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "tugbakolcuoglu"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/tugbakolcuoglu/library-api.git",
+    "accountId": "c51190d0-df6d-490f-a605-f1c486e15d41"
+  }
+}]]></component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/78392888e95a4b7c90c6abf02df21723fc0eb7a316153733fd54a524ce2d2f3/DbContext.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b5ce248cd9a8b3be41a6e24dd1d2bb7466ae3aab2f3ba3c8f56ec6a5aa30c06d/InferParameterBindingInfoConvention.cs" root0="FORCE_HIGHLIGHTING" />
@@ -70,6 +85,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "XThreadsFramesViewSplitterKey": "0.61650485",
+    "git-widget-placeholder": "master",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -126,7 +142,7 @@
       <workItem from="1772716275089" duration="403000" />
       <workItem from="1772716722470" duration="69000" />
       <workItem from="1772780712502" duration="3336000" />
-      <workItem from="1773039675225" duration="6319000" />
+      <workItem from="1773039675225" duration="7045000" />
     </task>
     <servers />
   </component>

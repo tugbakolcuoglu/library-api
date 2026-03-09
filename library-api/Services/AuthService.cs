@@ -11,6 +11,4 @@ public class AuthService(IAuthRepository authRepository) : IAuthService
         var response = await authRepository.Login(loginDto.Username, loginDto.Password);
         return response;
     }
-    
-    
 }
