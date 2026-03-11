@@ -5,15 +5,7 @@ using WebApplication2.Services.Interfaces;
 
 namespace WebApplication2.Services;
 
-public class StudentService : IStudentService
-{
-    private readonly IStudentRepository _studentRepository;
-
-    public StudentService(IStudentRepository studentRepository)
-    {
-        _studentRepository = studentRepository;
-    }
-
+public class StudentService(IStudentRepository studentRepository) : IStudentService {
     public async Task<StudentDto?> CreateStudentAsync(StudentDto studentDto)
     {
         var student = new Student
@@ -24,7 +16,7 @@ public class StudentService : IStudentService
             PhoneNumber = studentDto.PhoneNumber
         };
 
-        var created = await _studentRepository.RegisterNewStudentAsync(student);
+        var created = await studentRepository.RegisterNewStudentAsync(student);
 
         return new StudentDto
         {
@@ -33,5 +25,11 @@ public class StudentService : IStudentService
             Email = created.Email,
             PhoneNumber = created.PhoneNumber
         };
+    }
+
+    public Task<List<StudentDto>> FindStudentsByNameAsync(string name)
+    {
+        throw new NotImplementedException();
+        // TODO: implemenet this method
     }
 }

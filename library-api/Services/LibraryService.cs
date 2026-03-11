@@ -1,58 +1,23 @@
-﻿using WebApplication2.Entities;
+﻿using WebApplication2.DTOs;
 using WebApplication2.Repository.Interfaces;
+using WebApplication2.Services.Interfaces;
 
 namespace WebApplication2.Services;
 
-public class LibraryService
+// // TODO: student repo ve servisteki metodlar implemente edildikten sonra bu sınıfı da implemente edin
+public class LibraryService(IBookRepository bookRepository, IStudentRepository studentRepository) : ILibraryService
 {
-    private readonly IBookRepository _bookRepository;
-
-    public LibraryService(IBookRepository bookRepository)
-    {
-        _bookRepository = bookRepository;
-    }
-
-    public async Task<Book?> GetBookByIdAsync(Guid bookId)
-    {
-        return await _bookRepository.GetBookByIdAsync(bookId);
-    }
-
-    public async Task<List<Book>> GetAllBooksAsync()
-    {
-        return await _bookRepository.GetAllBooksAsync();
-    }
-
-    public async Task<Book> CreateBookAsync(Book book)
-    {
-        return await _bookRepository.CreateBookAsync(book);
-    }
-
-    public async Task<bool> DeleteBookAsync(Guid id)
-    {
-        return await _bookRepository.DeleteBookAsync(id);
-    }
-
-    public async Task<Book?> UpdateBookAsync(Guid id, Book updatedBook)
-    {
-        return await _bookRepository.UpdateBookAsync(id, updatedBook);
-    }
-
-    public async Task ReturnBookAsync(Guid bookId)
+    public Task<bool> AssignBookToStudentAsync(Guid bookId, Guid studentId)
     {
         throw new NotImplementedException();
     }
 
-    public async Task AssignBookToStudentAsync(Guid bookId, Guid studentId)
+    public Task<bool> ReturnBookAsync(Guid bookId)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<object?> FindBooksByNameAsync(string name)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<object?> FindBooksByAuthorNameAsync(string author)
+    public Task<List<BookDto>> GetStudentBooksAsync(Guid studentId)
     {
         throw new NotImplementedException();
     }

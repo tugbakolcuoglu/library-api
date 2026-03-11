@@ -5,4 +5,5 @@ namespace WebApplication2.Services.Interfaces;
 public interface IStudentService
 {
     Task<StudentDto?> CreateStudentAsync(StudentDto student);
+    Task<List<StudentDto>> FindStudentsByNameAsync(string name);
 }

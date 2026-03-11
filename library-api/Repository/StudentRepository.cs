@@ -15,4 +15,10 @@ public class StudentRepository(AppDbContext dbContext) : IStudentRepository
         
         return student;
     }
+
+    public Task<List<Student>> GetStudentsByNameAsync(string name)
+    {
+        throw new NotImplementedException();
+        // TODO: implemenet this method
+    }
 }
