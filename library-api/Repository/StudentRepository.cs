@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using WebApplication2.Data;
 using WebApplication2.Entities;
 using WebApplication2.Repository.Interfaces;
@@ -16,9 +17,13 @@ public class StudentRepository(AppDbContext dbContext) : IStudentRepository
         return student;
     }
 
-    public Task<List<Student>> GetStudentsByNameAsync(string name)
+    public async Task<List<Student>> GetStudentsByNameAsync(string name)
     {
-        throw new NotImplementedException();
-        // TODO: implemenet this method
+        return await dbContext.Students.Where(s => s.Name.Contains(name)).ToListAsync();
+    }
+    
+    public async Task<Student?> GetStudentByIdAsync(Guid id)
+    {
+        return await dbContext.Students.FindAsync(id);
     }
 }

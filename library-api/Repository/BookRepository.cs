@@ -46,30 +46,40 @@ public class BookRepository(AppDbContext context) : IBookRepository
         return true;
     }
 
-    public async Task<Book?> UpdateBookAsync(Book updatedBook)
+    public async Task<bool> UpdateBookAsync(Book updatedBook)
     {
         var book = await context.Books.FindAsync(updatedBook.Id);
 
         if (book == null)
-            return null;
+            return false;
 
         book.Title = updatedBook.Title;
         book.Author = updatedBook.Author;
         book.IsAvailable = updatedBook.IsAvailable;
         book.StudentId = updatedBook.StudentId;
 
-        await context.SaveChangesAsync();
-
-        return book;
+        var result = await context.SaveChangesAsync();
+        return result > 0;
     }
 
-    public Task<List<Book>> FindBooksByNameAsync(string name)
+    public async Task<List<Book>> FindBooksByNameAsync(string name)
     {
-        throw new NotImplementedException();
+        return await context.Books
+            .Where(b => b.Title.Contains(name))
+            .ToListAsync();
     }
 
-    public Task<List<Book>> FindBooksByAuthorNameAsync(string author)
+    public async Task<List<Book>> FindBooksByAuthorNameAsync(string author)
     {
-        throw new NotImplementedException();
+        return await context.Books
+            .Where(b => b.Author.Contains(author))
+            .ToListAsync();
+    }
+    
+    public async Task<List<Book>> GetBooksByStudentIdAsync(Guid studentId)
+    {
+        return await context.Books
+            .Where(b => b.StudentId == studentId)
+            .ToListAsync();
     }
 }

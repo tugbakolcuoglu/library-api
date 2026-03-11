@@ -27,9 +27,16 @@ public class StudentService(IStudentRepository studentRepository) : IStudentServ
         };
     }
 
-    public Task<List<StudentDto>> FindStudentsByNameAsync(string name)
+    public async Task<List<StudentDto>> FindStudentsByNameAsync(string name)
     {
-        throw new NotImplementedException();
-        // TODO: implemenet this method
+        var students = await studentRepository.GetStudentsByNameAsync(name);
+        
+        return students.Select(s => new StudentDto
+        {
+            Name = s.Name,
+            Surname = s.Surname,
+            Email = s.Email,
+            PhoneNumber = s.PhoneNumber
+        }).ToList();
     }
 }

@@ -94,18 +94,10 @@ public class BookService(IBookRepository bookRepository) : IBookService
             StudentId = updatedBook.StudentId
         };
         
-        var updatedBookEntity = await bookRepository.UpdateBookAsync(entityBook);
+        var isUpdated = await bookRepository.UpdateBookAsync(entityBook);
 
-        if (updatedBookEntity == null) return null;
-
-        return new BookDto
-        {
-            Id =  updatedBookEntity.Id,
-            Title = updatedBookEntity.Title,
-            Author = updatedBookEntity.Author,
-            IsAvailable = updatedBookEntity.IsAvailable,
-            StudentId = updatedBookEntity.StudentId
-        };
+        if (!isUpdated) return null;
+        return updatedBook;
     }
 
     public async Task<bool> DeleteBookAsync(Guid id)

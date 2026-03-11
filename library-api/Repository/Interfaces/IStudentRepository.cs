@@ -6,4 +6,5 @@ public interface IStudentRepository
 {
     Task<Student> RegisterNewStudentAsync(Student student);
     Task<List<Student>> GetStudentsByNameAsync(string name);
+    Task<Student?> GetStudentByIdAsync(Guid id);
 }

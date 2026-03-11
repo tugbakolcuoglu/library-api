@@ -13,5 +13,6 @@ public interface IBookRepository
     Task<List<Book>> FindBooksByAuthorNameAsync(string author);
     Task<Book> CreateBookAsync(Book book);
     Task<bool> DeleteBookAsync(Guid id);
-    Task<Book?> UpdateBookAsync(Book updatedBook);
+    Task<bool> UpdateBookAsync(Book updatedBook);
+    Task<List<Book>> GetBooksByStudentIdAsync(Guid studentId);
 }
