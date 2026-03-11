@@ -5,20 +5,29 @@ using WebApplication2.Services.Interfaces;
 
 namespace WebApplication2.Services;
 
-public class BookService : IBookService
+public class BookService(IBookRepository bookRepository) : IBookService
 {
-    private readonly IBookRepository _bookRepository;
-
-    public BookService(IBookRepository bookRepository)
+    public async Task<BookDto?> GetBookByIdAsync(Guid id)
     {
-        _bookRepository = bookRepository;
+        var book = await bookRepository.GetBookByIdAsync(id);
+        if (book == null) return null;
+
+        return new BookDto
+        {
+            Id = book.Id,
+            Title = book.Title,
+            Author = book.Author,
+            IsAvailable = book.IsAvailable,
+            StudentId = book.StudentId
+        };
     }
 
     public async Task<List<BookDto>> GetAllBooksAsync()
     {
-        var books = await _bookRepository.GetAllBooksAsync();
+        var books = await bookRepository.GetAllBooksAsync();
         return books.Select(b => new BookDto
         {
+            Id = b.Id,
             Title = b.Title,
             Author = b.Author,
             IsAvailable = b.IsAvailable,
@@ -26,19 +35,32 @@ public class BookService : IBookService
         }).ToList();
     }
 
-    public async Task<BookDto?> GetBookByIdAsync(Guid id)
+    public async Task<List<BookDto>> FindBooksByNameAsync(string name)
     {
-        var book = await _bookRepository.GetBookByIdAsync(id);
-        if (book == null) return null;
-
-        return new BookDto
+        var books = await bookRepository.FindBooksByNameAsync(name);
+        return books.Select(b => new BookDto
         {
-            Title = book.Title,
-            Author = book.Author,
-            IsAvailable = book.IsAvailable,
-            StudentId = book.StudentId
-        };
+            Id = b.Id,
+            Title = b.Title,
+            Author = b.Author,
+            IsAvailable = b.IsAvailable,
+            StudentId = b.StudentId
+        }).ToList();
     }
+
+    public async Task<List<BookDto>> FindBooksByAuthorNameAsync(string author)
+    {
+        var books = await bookRepository.FindBooksByAuthorNameAsync(author);
+        return books.Select(b => new BookDto
+        {
+            Id = b.Id,
+            Title = b.Title,
+            Author = b.Author,
+            IsAvailable = b.IsAvailable,
+            StudentId = b.StudentId
+        }).ToList();
+    }
+
 
     public async Task<BookDto> CreateBookAsync(BookCreateDto bookDto)
     {
@@ -49,10 +71,11 @@ public class BookService : IBookService
             IsAvailable = true
         };
 
-        var createdBook = await _bookRepository.CreateBookAsync(book);
+        var createdBook = await bookRepository.CreateBookAsync(book);
 
         return new BookDto
         {
+            Id =  createdBook.Id,
             Title = createdBook.Title,
             Author = createdBook.Author,
             IsAvailable = createdBook.IsAvailable,
@@ -60,55 +83,32 @@ public class BookService : IBookService
         };
     }
 
-    public async Task<BookDto?> UpdateBookAsync(Guid id, BookCreateDto updatedBook)
+    public async Task<BookDto?> UpdateBookAsync(BookDto updatedBook)
     {
-        var book = await _bookRepository.UpdateBookAsync(id, new Book
+        var entityBook = new Book
         {
+            Id = updatedBook.Id,
             Title = updatedBook.Title,
-            Author = updatedBook.Author
-        });
+            Author = updatedBook.Author,
+            IsAvailable = updatedBook.IsAvailable,
+            StudentId = updatedBook.StudentId
+        };
+        
+        var updatedBookEntity = await bookRepository.UpdateBookAsync(entityBook);
 
-        if (book == null) return null;
+        if (updatedBookEntity == null) return null;
 
         return new BookDto
         {
-            Title = book.Title,
-            Author = book.Author,
-            IsAvailable = book.IsAvailable,
-            StudentId = book.StudentId
+            Id =  updatedBookEntity.Id,
+            Title = updatedBookEntity.Title,
+            Author = updatedBookEntity.Author,
+            IsAvailable = updatedBookEntity.IsAvailable,
+            StudentId = updatedBookEntity.StudentId
         };
     }
 
     public async Task<bool> DeleteBookAsync(Guid id)
-        => await _bookRepository.DeleteBookAsync(id);
-
-    public async Task AssignBookToStudentAsync(Guid bookId, Guid studentId)
-        => await _bookRepository.AssignBookToStudentAsync(bookId, studentId);
-
-    public async Task ReturnBookAsync(Guid bookId)
-        => await _bookRepository.ReturnBookAsync(bookId);
-
-    public async Task<List<BookDto>> FindBooksByNameAsync(string name)
-    {
-        var books = await _bookRepository.FindBooksByNameAsync(name);
-        return books.Select(b => new BookDto
-        {
-            Title = b.Title,
-            Author = b.Author,
-            IsAvailable = b.IsAvailable,
-            StudentId = b.StudentId
-        }).ToList();
-    }
-
-    public async Task<List<BookDto>> FindBooksByAuthorNameAsync(string author)
-    {
-        var books = await _bookRepository.FindBooksByAuthorNameAsync(author);
-        return books.Select(b => new BookDto
-        {
-            Title = b.Title,
-            Author = b.Author,
-            IsAvailable = b.IsAvailable,
-            StudentId = b.StudentId
-        }).ToList();
-    }
+        => await bookRepository.DeleteBookAsync(id);
+    
 }

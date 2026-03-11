@@ -5,15 +5,11 @@ namespace WebApplication2.Services.Interfaces;
 
 public interface IBookService
 {
-    Task<List<BookDto>> GetAllBooksAsync();
     Task<BookDto?> GetBookByIdAsync(Guid id);
-    Task<BookDto> CreateBookAsync(BookCreateDto bookDto);
-    Task<BookDto?> UpdateBookAsync(Guid id, BookCreateDto updatedBook);
-    Task<bool> DeleteBookAsync(Guid id);
-
-    Task AssignBookToStudentAsync(Guid bookId, Guid studentId);
-    Task ReturnBookAsync(Guid bookId);
-
+    Task<List<BookDto>> GetAllBooksAsync();
     Task<List<BookDto>> FindBooksByNameAsync(string name);
     Task<List<BookDto>> FindBooksByAuthorNameAsync(string author);
+    Task<BookDto> CreateBookAsync(BookCreateDto bookDto);
+    Task<bool> DeleteBookAsync(Guid id);
+    Task<BookDto?> UpdateBookAsync(BookDto updatedBook);
 }
