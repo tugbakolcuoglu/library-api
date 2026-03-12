@@ -27,12 +27,14 @@ public class BookRepository(AppDbContext context) : IBookRepository
         return await context.Books
             .AsNoTracking()
             .Include(x=> x.AssignmentHistories)
-            .ThenInclude(x=> x.Student)
+                .ThenInclude(x=> x.Student)
             .FirstOrDefaultAsync(x => x.Id == id);
         // Burda daha detayli bir response donecegimiz icin History tablosundan bir sonraki iliskili tablo olan Student tablosunu da dahil ediyoruz,
         // bu sayede kitap detay bilgisi cagrildiginda o kitaba ait odunc alma gecmisi de gonderilecek, ve her bir odunc alma gecmisi icin o ogrencinin bilgileri de gonderilecek
     }
 
+    // Bu metodlara parametre olarak dogrudan DMO (Entity) gelecek. Burda Create isleminde Id servis katmani tarafindan basilmis hazir halde Entity gelmesi gerekiyor
+    // repository sadece gelen entity'i db ye yazar/ siler/ gunceller
     public Task AddAsync(Book book)
     {
         throw new NotImplementedException();

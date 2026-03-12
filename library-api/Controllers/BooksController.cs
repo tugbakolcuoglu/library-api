@@ -21,6 +21,7 @@ public class BooksController(IBookService bookService, ILibraryService librarySe
             Title = b.Title,
             Author = b.Author,
             IsAvailable = b.IsAvailable
+            
         }).ToList(); // View Modele donusturulmus listeyi olusturduk, artik bunu FE 'ye gonderebiliriz
         
         return Ok(booksVms);
