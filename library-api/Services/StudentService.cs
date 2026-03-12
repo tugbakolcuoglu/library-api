@@ -5,38 +5,30 @@ using WebApplication2.Services.Interfaces;
 
 namespace WebApplication2.Services;
 
-public class StudentService(IStudentRepository studentRepository) : IStudentService {
-    public async Task<StudentDto?> CreateStudentAsync(StudentDto studentDto)
+public class StudentService(IStudentRepository studentRepository) : IStudentService 
+{
+    public Task<List<StudentDto>> GetAllAsync()
     {
-        var student = new Student
-        {
-            Name = studentDto.Name,
-            Surname = studentDto.Surname,
-            Email = studentDto.Email,
-            PhoneNumber = studentDto.PhoneNumber
-        };
-
-        var created = await studentRepository.RegisterNewStudentAsync(student);
-
-        return new StudentDto
-        {
-            Name = created.Name,
-            Surname = created.Surname,
-            Email = created.Email,
-            PhoneNumber = created.PhoneNumber
-        };
+        throw new NotImplementedException();
     }
 
-    public async Task<List<StudentDto>> FindStudentsByNameAsync(string name)
+    public Task<StudentDetailDto?> GetByIdAsync(Guid id)
     {
-        var students = await studentRepository.GetStudentsByNameAsync(name);
-        
-        return students.Select(s => new StudentDto
-        {
-            Name = s.Name,
-            Surname = s.Surname,
-            Email = s.Email,
-            PhoneNumber = s.PhoneNumber
-        }).ToList();
+        throw new NotImplementedException();
+    }
+
+    public Task<StudentDto> CreateAsync(CreateStudentDto dto)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<StudentDto?> UpdateAsync(UpdateStudentDto dto)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> DeleteAsync(Guid id)
+    {
+        throw new NotImplementedException();
     }
 }

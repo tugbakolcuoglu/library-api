@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApplication2.DTOs;
 using WebApplication2.Services.Interfaces;
+using WebApplication2.VMs;
 
 namespace WebApplication2.Controllers;
 
@@ -9,8 +10,11 @@ namespace WebApplication2.Controllers;
 public class AuthController(IAuthService authService) : ControllerBase
 {
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginDto loginDto)
+    public async Task<IActionResult> Login(LoginRequestVm loginRequest)
     {
+
+        var loginDto = new LoginRequestDto(loginRequest.Username, loginRequest.Password);
+        
         var result = await authService.LoginAsync(loginDto);
 
         if (!result)

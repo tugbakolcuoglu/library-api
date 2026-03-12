@@ -1,6 +1,6 @@
-namespace WebApplication2.DTOs;
+namespace WebApplication2.VMs;
 
-public class StudentDto
+public class StudentResponseVm
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = null!;
@@ -9,17 +9,34 @@ public class StudentDto
     public string Email { get; set; } = null!;
 }
 
-public class StudentDetailDto
+public class CreateStudentRequestVm
+{
+    public string Name { get; set; } = null!;
+    public string Surname { get; set; } = null!;
+    public string PhoneNumber { get; set; } = null!;
+    public string Email { get; set; } = null!;
+}
+
+public class UpdateStudentRequestVm
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = null!;
     public string Surname { get; set; } = null!;
     public string PhoneNumber { get; set; } = null!;
     public string Email { get; set; } = null!;
-    public List<StudentHistoryItemDto> History { get; set; } = new();
 }
 
-public class StudentHistoryItemDto
+public class StudentDetailResponseVm
+{
+    public Guid Id { get; set; }
+    public string Name { get; set; } = null!;
+    public string Surname { get; set; } = null!;
+    public string PhoneNumber { get; set; } = null!;
+    public string Email { get; set; } = null!;
+    public List<StudentHistoryItemVm> History { get; set; } = new();
+}
+
+public class StudentHistoryItemVm
 {
     public Guid AssignmentHistoryId { get; set; }
     public Guid BookId { get; set; }
@@ -27,21 +44,4 @@ public class StudentHistoryItemDto
     public string BookAuthor { get; set; } = null!;
     public DateTime AssignedDate { get; set; }
     public DateTime? ReturnedDate { get; set; }
-}
-
-public class CreateStudentDto
-{
-    public string Name { get; set; } = null!;
-    public string Surname { get; set; } = null!;
-    public string PhoneNumber { get; set; } = null!;
-    public string Email { get; set; } = null!;
-}
-
-public class UpdateStudentDto
-{
-    public Guid Id { get; set; }
-    public string Name { get; set; } = null!;
-    public string Surname { get; set; } = null!;
-    public string PhoneNumber { get; set; } = null!;
-    public string Email { get; set; } = null!;
 }

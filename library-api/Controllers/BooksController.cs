@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebApplication2.DTOs;
 using WebApplication2.Services.Interfaces;
+using WebApplication2.VMs;
 
 namespace WebApplication2.Controllers;
 
@@ -11,76 +11,49 @@ public class BooksController(IBookService bookService, ILibraryService librarySe
     [HttpGet]
     public async Task<IActionResult> GetAllBooks()
     {
-        var books = await bookService.GetAllBooksAsync();
-        return Ok(books);
+        var booksDto = await bookService.GetAllAsync();
+        // dto turunde oldugu icin burda bunu VM cevirmemiz gerkiyor
+        // cunku frontend DTO'yu bilmez, sadece VM'yi bilir
+        
+        var booksVms = booksDto.Select(b => new BookResponseVm
+        {
+            Id = b.Id,
+            Title = b.Title,
+            Author = b.Author,
+            IsAvailable = b.IsAvailable
+        }).ToList(); // View Modele donusturulmus listeyi olusturduk, artik bunu FE 'ye gonderebiliriz
+        
+        return Ok(booksVms);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetBookById(Guid id)
     {
-        var book = await bookService.GetBookByIdAsync(id);
+        var bookDetailDto = await bookService.GetByIdAsync(id);
 
-        if (book == null)
+        if (bookDetailDto == null)
             return NotFound("Kitap bulunamadı");
 
-        return Ok(book);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> CreateBook(BookCreateDto bookDto)
-    {
-        var createdBook = await bookService.CreateBookAsync(bookDto);
-        return Ok(createdBook);
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateBook(Guid id, BookDto updatedBookDto)
-    {
-        updatedBookDto.Id = id;
-
-        var book = await bookService.UpdateBookAsync(updatedBookDto);
-
-        if (book == null)
-            return NotFound("Kitap bulunamadı");
-
-        return Ok(book);
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteBook(Guid id)
-    {
-        var result = await bookService.DeleteBookAsync(id);
-
-        if (!result)
-            return NotFound("Kitap bulunamadı");
-
-        return Ok("Kitap silindi");
-    }
-
-    [HttpGet("search/name")]
-    public async Task<IActionResult> FindBooksByName([FromQuery] string name)
-    {
-        var books = await bookService.FindBooksByNameAsync(name);
-        return Ok(books);
-    }
-
-    [HttpGet("search/author")]
-    public async Task<IActionResult> FindBooksByAuthor([FromQuery] string author)
-    {
-        var books = await bookService.FindBooksByAuthorNameAsync(author);
-        return Ok(books);
-    }
-
-    [HttpPost("assign")]
-    public async Task<IActionResult> AssignBook(Guid bookId, Guid studentId)
-    {
-        var result = await libraryService.AssignBookToStudentAsync(bookId, studentId);
-
-        if (!result)
+        var bookDetailVm = new BookDetailResponseVm
         {
-            return BadRequest("Kitap atanamadı. Kitap zaten birinde olabilir veya bilgiler hatalıdır.");
-        }
+            Id = bookDetailDto.Id,
+            Title = bookDetailDto.Title,
+            Author = bookDetailDto.Author,
+            IsAvailable = bookDetailDto.IsAvailable,
+            History = bookDetailDto.History.Select(h => new BookHistoryItemVm
+            {
+                AssignmentHistoryId = h.AssignmentHistoryId,
+                StudentId = h.StudentId,
+                StudentFullName = h.StudentFullName,
+                AssignedDate = h.AssignedDate,
+                ReturnedDate = h.ReturnedDate
+            }).ToList()
+        };
+        // az once servis katmaninda yaptigimiz ayni islemi bu sefer DTO -> VM donusumu icin burda yaptik,
+        // yine 2 farkli yontemle yapilabilir
+        // isterinse history bilgisini BookDetailDto icinde doldurabiliriz, istersek de disarda doldurabiliriz, bu tamamen tercihe bagli
 
-        return Ok("Kitap başarıyla öğrenciye verildi");
+        return Ok(bookDetailVm);
     }
 }
+

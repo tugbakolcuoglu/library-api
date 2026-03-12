@@ -1,5 +1,4 @@
 using WebApplication2.DTOs;
-using WebApplication2.Entities;
 
 namespace WebApplication2.Services.Interfaces;
 
@@ -8,7 +7,5 @@ namespace WebApplication2.Services.Interfaces;
 /// </summary>
 public interface IAuthService
 {
-  
-    Task<bool> LoginAsync(LoginDto loginDto);
-
+    Task<bool> LoginAsync(LoginRequestDto loginDto);
 }

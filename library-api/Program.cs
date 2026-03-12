@@ -20,23 +20,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 //AppDbContext'i SQL Server veritabanına bağlamak için yapılandırıyoruz, bağlantı dizesi appsettings.json dosyasından alınır.
 
-builder.Services.AddScoped<LibraryService>();
+
 //LibraryService'ı bağımlılık enjeksiyonuna ekliyoruz, böylece controller'larda kullanabiliriz.
 
-builder.Services.AddScoped<IBookRepository, BookRepository>();
-builder.Services.AddScoped<LibraryService>();
+builder.Services.AddScoped<ILibraryService,LibraryService>();
 
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IBookService, BookService>();
 
-builder.Services.AddScoped<IStudentRepository, StudentRepository>();
-builder.Services.AddScoped<IStudentService, StudentService>();
 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IStudentService, StudentService>();

@@ -7,100 +7,99 @@ namespace WebApplication2.Services;
 
 public class BookService(IBookRepository bookRepository) : IBookService
 {
-    public async Task<BookDto?> GetBookByIdAsync(Guid id)
+    public async Task<List<BookDto>> GetAllAsync()
     {
-        var book = await bookRepository.GetBookByIdAsync(id);
-        if (book == null) return null;
-
-        return new BookDto
+        var bookEntities = await bookRepository.GetAllAsync();
+        
+        // Book entitysini BookDto'ya dönüştür
+        var bookDtos = bookEntities.Select(book => new BookDto
         {
             Id = book.Id,
             Title = book.Title,
             Author = book.Author,
-            IsAvailable = book.IsAvailable,
-            StudentId = book.StudentId
-        };
-    }
-
-    public async Task<List<BookDto>> GetAllBooksAsync()
-    {
-        var books = await bookRepository.GetAllBooksAsync();
-        return books.Select(b => new BookDto
-        {
-            Id = b.Id,
-            Title = b.Title,
-            Author = b.Author,
-            IsAvailable = b.IsAvailable,
-            StudentId = b.StudentId
+            IsAvailable = book.IsAvailable
         }).ToList();
-    }
-
-    public async Task<List<BookDto>> FindBooksByNameAsync(string name)
-    {
-        var books = await bookRepository.FindBooksByNameAsync(name);
-        return books.Select(b => new BookDto
-        {
-            Id = b.Id,
-            Title = b.Title,
-            Author = b.Author,
-            IsAvailable = b.IsAvailable,
-            StudentId = b.StudentId
-        }).ToList();
-    }
-
-    public async Task<List<BookDto>> FindBooksByAuthorNameAsync(string author)
-    {
-        var books = await bookRepository.FindBooksByAuthorNameAsync(author);
-        return books.Select(b => new BookDto
-        {
-            Id = b.Id,
-            Title = b.Title,
-            Author = b.Author,
-            IsAvailable = b.IsAvailable,
-            StudentId = b.StudentId
-        }).ToList();
-    }
-
-
-    public async Task<BookDto> CreateBookAsync(BookCreateDto bookDto)
-    {
-        var book = new Book
-        {
-            Title = bookDto.Title,
-            Author = bookDto.Author,
-            IsAvailable = true
-        };
-
-        var createdBook = await bookRepository.CreateBookAsync(book);
-
-        return new BookDto
-        {
-            Id =  createdBook.Id,
-            Title = createdBook.Title,
-            Author = createdBook.Author,
-            IsAvailable = createdBook.IsAvailable,
-            StudentId = createdBook.StudentId
-        };
-    }
-
-    public async Task<BookDto?> UpdateBookAsync(BookDto updatedBook)
-    {
-        var entityBook = new Book
-        {
-            Id = updatedBook.Id,
-            Title = updatedBook.Title,
-            Author = updatedBook.Author,
-            IsAvailable = updatedBook.IsAvailable,
-            StudentId = updatedBook.StudentId
-        };
         
-        var isUpdated = await bookRepository.UpdateBookAsync(entityBook);
+        return bookDtos;
 
-        if (!isUpdated) return null;
-        return updatedBook;
     }
 
-    public async Task<bool> DeleteBookAsync(Guid id)
-        => await bookRepository.DeleteBookAsync(id);
-    
+    public async Task<BookDetailDto?> GetByIdAsync(Guid id)
+    {
+        var bookEntity = await bookRepository.GetByIdAsync(id);
+        
+        if (bookEntity == null)
+            return null;
+        
+        // Book entitysini BookDetailDto'ya dönüştür
+
+        #region 1. Yontem -- History bilgisini icerde doldurmak
+        
+        var bookDetailDto = new BookDetailDto
+        {
+            Id = bookEntity.Id,
+            Title = bookEntity.Title,
+            Author = bookEntity.Author,
+            IsAvailable = bookEntity.IsAvailable,
+            History = bookEntity.AssignmentHistories.Select(x=> new BookHistoryItemDto()
+            {
+                AssignmentHistoryId = x.Id,
+                StudentId = x.StudentId,
+                StudentFullName = $"{x.Student.Name} {x.Student.Surname}",
+                AssignedDate = x.AssignedDate,
+                ReturnedDate = x.ReturnedDate
+            }).ToList()
+        };
+
+
+        #endregion
+     
+
+        #region 2.Yontem -- History bilgisini ayrica disarda doldurmak
+        
+        // var bookDetailDto = new BookDetailDto
+        // {
+        //     Id = bookEntity.Id,
+        //     Title = bookEntity.Title,
+        //     Author = bookEntity.Author,
+        //     IsAvailable = bookEntity.IsAvailable
+        // };
+        // // once ana bilgileri doldurduk, sonra history bilgisini dolduracagiz
+        //
+        // var historyDtos = bookEntity.AssignmentHistories.Select(x=> new BookHistoryItemDto()
+        // {
+        //     AssignmentHistoryId = x.Id,
+        //     StudentId = x.StudentId,
+        //     StudentFullName = $"{x.Student.Name} {x.Student.Surname}",
+        //     AssignedDate = x.AssignedDate,
+        //     ReturnedDate = x.ReturnedDate
+        // }).ToList();
+        //
+        // // historyDtos listesini bookDetailDto'nun History property'sine atiyoruz
+        //
+        // bookDetailDto.History = historyDtos;
+
+        #endregion
+
+        // NOT her iki yontemde de LINQ kullanarak ve ya istenirse foreach dongusu ile tek tek olusturlabilir,
+        // Ben LINQ tercih ettim cunku daha kisa ve okunabilir oluyor, ama bu tamamen tercihe baglidir.
+        
+        
+        return bookDetailDto; // olusturulan dto dondurulur
+    }
+
+    public Task<BookDto> CreateAsync(CreateBookDto dto)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<BookDto?> UpdateAsync(UpdateBookDto dto)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> DeleteAsync(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 }

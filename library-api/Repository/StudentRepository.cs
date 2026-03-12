@@ -7,23 +7,43 @@ namespace WebApplication2.Repository;
 
 public class StudentRepository(AppDbContext dbContext) : IStudentRepository
 {
-    public async Task<Student> RegisterNewStudentAsync(Student student)
+    public Task<List<Student>> GetAllAsync()
     {
-        student.Id = Guid.NewGuid();
-        
-        await dbContext.AddAsync(student);
-        await dbContext.SaveChangesAsync();
-        
-        return student;
+        throw new NotImplementedException();
     }
 
-    public async Task<List<Student>> GetStudentsByNameAsync(string name)
+    public Task<Student?> GetByIdAsync(Guid id)
     {
-        return await dbContext.Students.Where(s => s.Name.Contains(name)).ToListAsync();
+        throw new NotImplementedException();
     }
-    
-    public async Task<Student?> GetStudentByIdAsync(Guid id)
+
+    public Task<Student?> GetByIdWithHistoryAsync(Guid id)
     {
-        return await dbContext.Students.FindAsync(id);
+        throw new NotImplementedException();
+    }
+
+    public Task AddAsync(Student student)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task UpdateAsync(Student student)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task DeleteAsync(Student student)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> ExistsAsync(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task SaveChangesAsync()
+    {
+        throw new NotImplementedException();
     }
 }

@@ -3,16 +3,13 @@
 namespace WebApplication2.Repository.Interfaces;
 
 /// <summary>
-/// "Kitap" nesneleri uzerinde CRUD islemlerini tanimlayan arayuz.
+/// Kitap entity'si için veri erişim işlemlerini tanımlar.
 /// </summary>
 public interface IBookRepository
 {
-    Task<Book?> GetBookByIdAsync(Guid bookId);
-    Task<List<Book>> GetAllBooksAsync();
-    Task<List<Book>> FindBooksByNameAsync(string name);
-    Task<List<Book>> FindBooksByAuthorNameAsync(string author);
-    Task<Book> CreateBookAsync(Book book);
-    Task<bool> DeleteBookAsync(Guid id);
-    Task<bool> UpdateBookAsync(Book updatedBook);
-    Task<List<Book>> GetBooksByStudentIdAsync(Guid studentId);
+    Task<List<Book>> GetAllAsync();
+    Task<Book?> GetByIdAsync(Guid id);
+    Task AddAsync(Book book);
+    Task UpdateAsync(Book book);
+    Task DeleteAsync(Book book);
 }

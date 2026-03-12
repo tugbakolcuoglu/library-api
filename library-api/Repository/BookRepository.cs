@@ -7,79 +7,45 @@ namespace WebApplication2.Repository;
 
 public class BookRepository(AppDbContext context) : IBookRepository
 {
-    public async Task<Book?> GetBookByIdAsync(Guid bookId)
+    public async Task<List<Book>> GetAllAsync()
     {
         return await context.Books
-            .FirstOrDefaultAsync(b => b.Id == bookId);
+            .AsNoTracking()
+            .Include(x=> x.AssignmentHistories)
+            .ToListAsync(); 
+        // database'deki butun kitaplari liste yapip ceker.
+        // asNoTracking() ile çekilen veriler üzerinde değişiklik yapılmaz, sadece okunur.
+        // Bu performansı artırır çünkü Entity Framework bu verileri izlemeye çalışmaz.
+        // sadece kitapların temel bilgilerini çekmek istiyoruz, bir degisiklik yapilmayacak bu yuzden AsNoTracking ile Entity Framework'e bu verileri izleme diyoruz
+        
+        // Neden assignementHistory'i de dahil ediyoruz?
+        // Cunku kitaplarin isAvalilabe bilgisini ogrenmek icin history kayitlarinda returned date'i null olan bir kayit var mi yok mu ona bakacagiz, 
     }
 
-    public async Task<List<Book>> GetAllBooksAsync()
+    public async Task<Book?> GetByIdAsync(Guid id)
     {
         return await context.Books
-            .Include(b => b.Student)
-            .Include(b => b.AssignmentHistories)
-            .ThenInclude(h => h.Student)
-            .ToListAsync();
+            .AsNoTracking()
+            .Include(x=> x.AssignmentHistories)
+            .ThenInclude(x=> x.Student)
+            .FirstOrDefaultAsync(x => x.Id == id);
+        // Burda daha detayli bir response donecegimiz icin History tablosundan bir sonraki iliskili tablo olan Student tablosunu da dahil ediyoruz,
+        // bu sayede kitap detay bilgisi cagrildiginda o kitaba ait odunc alma gecmisi de gonderilecek, ve her bir odunc alma gecmisi icin o ogrencinin bilgileri de gonderilecek
     }
 
-    public async Task<Book> CreateBookAsync(Book book)
+    public Task AddAsync(Book book)
     {
-        book.Id = Guid.NewGuid();
-        book.IsAvailable = true;
-
-        await context.Books.AddAsync(book);
-        await context.SaveChangesAsync();
-
-        return book;
+        throw new NotImplementedException();
     }
 
-    public async Task<bool> DeleteBookAsync(Guid id)
+    public Task UpdateAsync(Book book)
     {
-        var book = await context.Books.FindAsync(id);
-
-        if (book == null)
-            return false;
-
-        context.Books.Remove(book);
-        await context.SaveChangesAsync();
-
-        return true;
+        throw new NotImplementedException();
     }
 
-    public async Task<bool> UpdateBookAsync(Book updatedBook)
+    public Task DeleteAsync(Book book)
     {
-        var book = await context.Books.FindAsync(updatedBook.Id);
-
-        if (book == null)
-            return false;
-
-        book.Title = updatedBook.Title;
-        book.Author = updatedBook.Author;
-        book.IsAvailable = updatedBook.IsAvailable;
-        book.StudentId = updatedBook.StudentId;
-
-        var result = await context.SaveChangesAsync();
-        return result > 0;
-    }
-
-    public async Task<List<Book>> FindBooksByNameAsync(string name)
-    {
-        return await context.Books
-            .Where(b => b.Title.Contains(name))
-            .ToListAsync();
-    }
-
-    public async Task<List<Book>> FindBooksByAuthorNameAsync(string author)
-    {
-        return await context.Books
-            .Where(b => b.Author.Contains(author))
-            .ToListAsync();
+        throw new NotImplementedException();
     }
     
-    public async Task<List<Book>> GetBooksByStudentIdAsync(Guid studentId)
-    {
-        return await context.Books
-            .Where(b => b.StudentId == studentId)
-            .ToListAsync();
-    }
 }

@@ -6,7 +6,7 @@ namespace WebApplication2.Services;
 
 public class AuthService(IAuthRepository authRepository) : IAuthService
 {
-    public async Task<bool> LoginAsync(LoginDto loginDto)
+    public async Task<bool> LoginAsync(LoginRequestDto loginDto)
     {
         var response = await authRepository.Login(loginDto.Username, loginDto.Password);
         return response;
