@@ -11,3 +11,5 @@
 *.tmp
 *.vspscc
 *.vssscc
+.vs/
+.idea/
