@@ -1,0 +1,13 @@
+**/bin/
+**/obj/
+**/.idea/
+**/.vs/
+*.user
+*.suo
+*.cache
+*.log
+*.db
+*.bak
+*.tmp
+*.vspscc
+*.vssscc
