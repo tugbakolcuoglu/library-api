@@ -7,6 +7,7 @@ namespace WebApplication2.Services;
 
 public class LibraryService(IBookRepository bookRepository, IStudentRepository studentRepository) : ILibraryService
 {
+    // Doldurmayi dene, cok zorlanirsan birak
     public Task<LoanResultDto> BorrowBookAsync(BorrowBookDto dto)
     {
         throw new NotImplementedException();

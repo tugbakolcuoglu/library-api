@@ -7,43 +7,52 @@ namespace WebApplication2.Repository;
 
 public class StudentRepository(AppDbContext dbContext) : IStudentRepository
 {
-    public Task<List<Student>> GetAllAsync()
+    public async Task<List<Student>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return await dbContext.Students.ToListAsync();
     }
 
-    public Task<Student?> GetByIdAsync(Guid id)
+    public async Task<Student?> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return await dbContext.Students.FindAsync(id);
     }
 
-    public Task<Student?> GetByIdWithHistoryAsync(Guid id)
+    public async Task<Student?> GetByIdWithHistoryAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return await dbContext.Students
+            .Include(s => s.AssignmentHistories) 
+            .FirstOrDefaultAsync(s => s.Id == id);
+        // Öğrenciyi ve onun ödev geçmişini tek bir sorguda getirir. Eğer öğrenci bulunamazsa null döner.
     }
 
-    public Task AddAsync(Student student)
+    public async Task AddAsync(Student student)
     {
-        throw new NotImplementedException();
+        await dbContext.Students.AddAsync(student);
     }
 
-    public Task UpdateAsync(Student student)
+    public async Task UpdateAsync(Student student)
     {
-        throw new NotImplementedException();
+        dbContext.Students.Update(student);
+        await Task.CompletedTask;
+        // Update işlemi için EF Core zaten takip ettiği entity'leri günceller, burada ekstra bir işlem yapmamıza gerek yok.
+        // Ancak async imzasını korumak için boş bir Task döndürüyoruz.
     }
 
-    public Task DeleteAsync(Student student)
+    public async Task DeleteAsync(Student student)
     {
-        throw new NotImplementedException();
+        dbContext.Students.Remove(student);
+        await Task.CompletedTask;
     }
 
-    public Task<bool> ExistsAsync(Guid id)
+    public async Task<bool> ExistsAsync(Guid id)
     {
-        throw new NotImplementedException();
+        // Bu ID'ye sahip biri var mı yok mu kontrolü
+        return await dbContext.Students.AnyAsync(s => s.Id == id);
     }
 
-    public Task SaveChangesAsync()
+    public async Task SaveChangesAsync()
     {
-        throw new NotImplementedException();
+        // Yapılan tüm ekleme, silme, güncelleme işlemlerini veritabanına yansıtır (Commit)
+        await dbContext.SaveChangesAsync();
     }
 }
