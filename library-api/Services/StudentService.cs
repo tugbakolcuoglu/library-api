@@ -1,5 +1,6 @@
 ﻿using WebApplication2.DTOs;
 using WebApplication2.Entities;
+using WebApplication2.Models.Entities;
 using WebApplication2.Repository.Interfaces;
 using WebApplication2.Services.Interfaces;
 
@@ -10,6 +11,19 @@ public class StudentService(IStudentRepository studentRepository) : IStudentServ
     public async Task<List<StudentDto>> GetAllAsync()
     {
         var students = await studentRepository.GetAllAsync();
+        
+        return students.Select(s => new StudentDto 
+        { 
+            Id = s.Id, 
+            Name = s.Name, 
+            Surname = s.Surname, 
+            Email = s.Email 
+        }).ToList();
+    }
+
+    public async Task<List<StudentDto>> GetByEmailAsync(string email)
+    {
+        var students = await studentRepository.GetByEmailAsync(email);
         
         return students.Select(s => new StudentDto 
         { 
@@ -46,7 +60,6 @@ public class StudentService(IStudentRepository studentRepository) : IStudentServ
         };
 
         await studentRepository.AddAsync(student);
-        await studentRepository.SaveChangesAsync(); 
 
         return new StudentDto 
         { 
@@ -69,7 +82,7 @@ public class StudentService(IStudentRepository studentRepository) : IStudentServ
         student.Email = dto.Email;
 
         await studentRepository.UpdateAsync(student);
-        await studentRepository.SaveChangesAsync();
+
 
         return new StudentDto 
         { 
@@ -87,7 +100,6 @@ public class StudentService(IStudentRepository studentRepository) : IStudentServ
         if (student == null) return false;// Silinecek öğrenci bulunamazsa false döndürüyoruz
 
         await studentRepository.DeleteAsync(student);
-        await studentRepository.SaveChangesAsync();
         
         return true;
     }

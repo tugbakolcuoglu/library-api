@@ -1,4 +1,5 @@
 using WebApplication2.Entities;
+using WebApplication2.Models.Entities;
 
 namespace WebApplication2.Repository.Interfaces;
 
@@ -9,10 +10,8 @@ public interface IStudentRepository
 {
     Task<List<Student>> GetAllAsync();
     Task<Student?> GetByIdAsync(Guid id);
-    Task<Student?> GetByIdWithHistoryAsync(Guid id);
+    Task<List<Student>> GetByEmailAsync(string email);
     Task AddAsync(Student student);
     Task UpdateAsync(Student student);
     Task DeleteAsync(Student student);
-    Task<bool> ExistsAsync(Guid id);
-    Task SaveChangesAsync();
 }

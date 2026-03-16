@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WebApplication2.Entities;
 
-namespace WebApplication2.Entities;
+namespace WebApplication2.Models.Entities;
 
 public class Student
 {

@@ -8,6 +8,7 @@ namespace WebApplication2.Services.Interfaces;
 public interface IStudentService
 {
     Task<List<StudentDto>> GetAllAsync();
+    Task<List<StudentDto>> GetByEmailAsync(string email);
     Task<StudentDetailDto?> GetByIdAsync(Guid id);
     Task<StudentDto> CreateAsync(CreateStudentDto dto);
     Task<StudentDto?> UpdateAsync(UpdateStudentDto dto);
