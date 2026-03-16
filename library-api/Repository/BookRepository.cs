@@ -37,17 +37,20 @@ public class BookRepository(AppDbContext context) : IBookRepository
     // repository sadece gelen entity'i db ye yazar/ siler/ gunceller
     public Task AddAsync(Book book)
     {
-        throw new NotImplementedException();
+        context.Books.Add(book);
+        return context.SaveChangesAsync();
     }
 
     public Task UpdateAsync(Book book)
     {
-        throw new NotImplementedException();
+        context.Books.Update(book);
+        return context.SaveChangesAsync();
     }
 
     public Task DeleteAsync(Book book)
     {
-        throw new NotImplementedException();
+        context.Books.Remove(book);
+        return context.SaveChangesAsync();
     }
     
 }

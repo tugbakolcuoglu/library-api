@@ -1,4 +1,5 @@
-﻿using WebApplication2.DTOs;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using WebApplication2.DTOs;
 using WebApplication2.Entities;
 using WebApplication2.Repository.Interfaces;
 using WebApplication2.Services.Interfaces;
@@ -119,25 +120,56 @@ public class BookService(IBookRepository bookRepository) : IBookService
     }
 
     
-    public Task<BookDto> CreateAsync(CreateBookDto dto)
+    public async Task<BookDto> CreateAsync(CreateBookDto dto)
     {
-        // bu dto sadece title ve author icermekte
-        // entity'i burda olusturcaz
-        // Guid.NewGuid() ile id 'yi burda bascaz
-        // olusturdugumuz entity'i repository'e atacagiz.
-        // sonra gelen yeni entity modelini tekrar DTO 'ya cevirip controller'a atacaz
-        
-        throw new NotImplementedException();
+        var newBookEntity = new Book
+        {
+            Id = Guid.NewGuid(),
+            Title = dto.Title,
+            Author = dto.Author
+        };
+
+        await bookRepository.AddAsync(newBookEntity);
+
+        return new BookDto
+        {
+            Id = newBookEntity.Id,
+            Title = newBookEntity.Title,
+            Author = newBookEntity.Author,
+            IsAvailable = newBookEntity.IsAvailable
+        };
     }
 
-    public Task<BookDto?> UpdateAsync(UpdateBookDto dto)
+    public async Task<BookDto?> UpdateAsync(UpdateBookDto dto)
     {
-        // update sadece Title ve / ve ya Author degistirecek, kesinlikle assignemt yapmayacak. 
-        throw new NotImplementedException();
+        var bookToUpdate = await bookRepository.GetByIdAsync(dto.Id);
+
+        if (bookToUpdate == null)
+            return null;
+
+        bookToUpdate.Title = dto.Title;
+        bookToUpdate.Author = dto.Author;
+
+        await bookRepository.UpdateAsync(bookToUpdate);
+
+        return new BookDto
+        {
+            Id = bookToUpdate.Id,
+            Title = bookToUpdate.Title,
+            Author = bookToUpdate.Author,
+            IsAvailable = bookToUpdate.IsAvailable
+        };
     }
 
-    public Task<bool> DeleteAsync(Guid id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var book = await bookRepository.GetByIdAsync(id);
+
+        if (book == null)
+            return false;
+
+        await bookRepository.DeleteAsync(book);
+
+        return true;
     }
 }
