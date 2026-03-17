@@ -39,14 +39,7 @@ public class StudentController(IStudentService studentService, IMapper mapper) :
         var students = await studentService.GetByEmailAsync(email);
         if (students == null)
             return NotFound();
-        var studentsVm = students.Select(s => new StudentResponseVm()
-        {
-            Id = s.Id,
-            Email = s.Email,
-            Name = s.Name,
-            Surname = s.Surname,
-            PhoneNumber = s.PhoneNumber
-        }).ToList();
+        var studentsVm = mapper.Map<List<StudentResponseVm>>(students);
         return Ok(studentsVm);
     }
     

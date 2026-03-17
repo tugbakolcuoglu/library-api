@@ -1,4 +1,5 @@
-﻿using WebApplication2.DTOs;
+﻿using AutoMapper;
+using WebApplication2.DTOs;
 using WebApplication2.Entities;
 using WebApplication2.Models.Entities;
 using WebApplication2.Repository.Interfaces;
@@ -6,7 +7,7 @@ using WebApplication2.Services.Interfaces;
 
 namespace WebApplication2.Services;
 
-public class StudentService(IStudentRepository studentRepository) : IStudentService 
+public class StudentService(IStudentRepository studentRepository,IMapper mapper) : IStudentService 
 {
     public async Task<List<StudentDto>> GetAllAsync()
     {
@@ -14,26 +15,15 @@ public class StudentService(IStudentRepository studentRepository) : IStudentServ
         
         var students = await studentRepository.GetAllAsync();
         
-        return students.Select(s => new StudentDto 
-        { 
-            Id = s.Id, 
-            Name = s.Name, 
-            Surname = s.Surname, 
-            Email = s.Email 
-        }).ToList();
+        var studentDtos=mapper.Map<List<StudentDto>>(students);
+        return studentDtos;
     }
 
     public async Task<List<StudentDto>> GetByEmailAsync(string email)
     {
         var students = await studentRepository.GetByEmailAsync(email);
         
-        return students.Select(s => new StudentDto 
-        { 
-            Id = s.Id, 
-            Name = s.Name, 
-            Surname = s.Surname, 
-            Email = s.Email 
-        }).ToList();
+        return mapper.Map<List<StudentDto>>(students);
     }
 
     public async Task<StudentDetailDto?> GetByIdAsync(Guid id)
@@ -42,64 +32,36 @@ public class StudentService(IStudentRepository studentRepository) : IStudentServ
         
         if (student == null) return null;
 
-        return new StudentDetailDto
-        {
-            Id = student.Id,
-            Name = student.Name,
-            Surname = student.Surname,
-            Email = student.Email
-        };
+        var studentDetailDto=mapper.Map<StudentDetailDto>(student);
+        return studentDetailDto;
     }// GetByIdAsync metodunda, öğrenci bulunamazsa null döndürüyoruz. Bulunursa detaylı bir DTO oluşturup döndürüyoruz.
 
     public async Task<StudentDto> CreateAsync(CreateStudentDto dto)
     {
-        var student = new Student
-        {
-            Id = Guid.NewGuid(), // Yeni bir GUID oluşturuyoruz
-            Name = dto.Name,
-            Surname = dto.Surname,
-            Email = dto.Email
-        };
+        var newStudentEntity = mapper.Map<Student>(dto);
 
-        await studentRepository.AddAsync(student);
-
-        return new StudentDto 
-        { 
-            Id = student.Id, 
-            Name = student.Name, 
-            Surname = student.Surname, 
-            Email = student.Email 
-        };
+        await studentRepository.AddAsync(newStudentEntity);
+        return  mapper.Map<StudentDto>(newStudentEntity);
     }
 
     public async Task<StudentDto?> UpdateAsync(UpdateStudentDto dto)
     {
-        var student = await studentRepository.GetByIdAsync(dto.Id);
+        var updateStudent = await studentRepository.GetByIdAsync(dto.Id);
         
-        if (student == null) return null;
+        if (updateStudent == null) return null;
 
-        // Mevcut entity'yi DTO'dan gelen bilgilerle güncelliyoruz
-        student.Name = dto.Name;
-        student.Surname = dto.Surname;
-        student.Email = dto.Email;
+        mapper.Map(dto, updateStudent);
 
-        await studentRepository.UpdateAsync(student);
+        await studentRepository.UpdateAsync(updateStudent);
 
-
-        return new StudentDto 
-        { 
-            Id = student.Id, 
-            Name = student.Name, 
-            Surname = student.Surname, 
-            Email = student.Email 
-        };// Güncellenmiş bilgileri DTO olarak döndürüyoruz
+        return mapper.Map<StudentDto>(updateStudent);
     }
 
     public async Task<bool> DeleteAsync(Guid id)
     {
         var student = await studentRepository.GetByIdAsync(id);
         
-        if (student == null) return false;// Silinecek öğrenci bulunamazsa false döndürüyoruz
+        if (student == null) return false;
 
         await studentRepository.DeleteAsync(student);
         
