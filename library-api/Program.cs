@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore; 
 using WebApplication2.Data;
+using WebApplication2.Models;
 using WebApplication2.Repository;
 using WebApplication2.Repository.Interfaces;
 using WebApplication2.Services;
@@ -19,6 +20,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 //AppDbContext'i SQL Server veritabanına bağlamak için yapılandırıyoruz, bağlantı dizesi appsettings.json dosyasından alınır.
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));// AutoMapper registration
 
 
 //LibraryService'ı bağımlılık enjeksiyonuna ekliyoruz, böylece controller'larda kullanabiliriz.

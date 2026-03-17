@@ -35,10 +35,10 @@ public class BookRepository(AppDbContext context) : IBookRepository
 
     // Bu metodlara parametre olarak dogrudan DMO (Entity) gelecek. Burda Create isleminde Id servis katmani tarafindan basilmis hazir halde Entity gelmesi gerekiyor
     // repository sadece gelen entity'i db ye yazar/ siler/ gunceller
-    public Task AddAsync(Book book)
+    public async Task AddAsync(Book book)
     {
-        context.Books.Add(book);
-        return context.SaveChangesAsync();
+        await context.Books.AddAsync(book);
+        await context.SaveChangesAsync();
     }
 
     public Task UpdateAsync(Book book)

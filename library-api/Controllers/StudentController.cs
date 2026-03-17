@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using WebApplication2.DTOs;
 using WebApplication2.Services.Interfaces;
 using WebApplication2.VMs;
@@ -7,7 +8,7 @@ namespace WebApplication2.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class StudentController(IStudentService studentService) : ControllerBase
+public class StudentController(IStudentService studentService, IMapper mapper) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAllStudents()
@@ -15,14 +16,7 @@ public class StudentController(IStudentService studentService) : ControllerBase
         var students = await studentService.GetAllAsync();
         // yukardan gelen ogrenci nesnesi, StudentDto tipinde, burda bu nesneyi VM'ye donusturmemiz lazim
 
-        var studentsVm = students.Select(s => new StudentResponseVm()
-        {
-            Id = s.Id,
-            Email = s.Email,
-            Name = s.Name,
-            Surname = s.Surname,
-            PhoneNumber = s.PhoneNumber
-        }).ToList();
+        var studentsVm = mapper.Map<List<StudentResponseVm>>(students);
 
         return Ok(studentsVm);
     }
@@ -34,14 +28,7 @@ public class StudentController(IStudentService studentService) : ControllerBase
         if (student == null)
             return NotFound();
         
-        var studentVm = new StudentResponseVm()
-        {
-            Id = student.Id,
-            Email = student.Email,
-            Name = student.Name,
-            Surname = student.Surname,
-            PhoneNumber = student.PhoneNumber
-        };
+        var studentVm = mapper.Map<StudentDetailResponseVm>(student);
 
         return Ok(studentVm);
     }
@@ -66,37 +53,20 @@ public class StudentController(IStudentService studentService) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateStudent(CreateStudentRequestVm request)  
     {
-        var createdStudent = await studentService.CreateAsync(new CreateStudentDto()
-        {
-            Name = request.Name,
-            Surname = request.Surname,
-            Email = request.Email,
-            PhoneNumber = request.PhoneNumber
-        });
+        var dto = mapper.Map<CreateStudentDto>(request);
+        var createdStudent = await studentService.CreateAsync(dto);
 
-        var studentVm = new StudentResponseVm()
-        {
-            Id = createdStudent.Id,
-            Email = createdStudent.Email,
-            Name = createdStudent.Name,
-            Surname = createdStudent.Surname,
-            PhoneNumber = createdStudent.PhoneNumber
-        };
-
-        return CreatedAtAction(nameof(GetStudentById), new { id = studentVm.Id }, studentVm);
+        var studentVm = mapper.Map<StudentResponseVm>(createdStudent);
+        return Ok(studentVm);
     }
 
     [HttpPut]
     public async Task<IActionResult> UpdateStudent(UpdateStudentRequestVm request)
     {
-        var updatedStudent = await studentService.UpdateAsync(new UpdateStudentDto()
-        {
-            Id = request.Id,
-            Name = request.Name,
-            Surname = request.Surname,
-            Email = request.Email,
-            PhoneNumber = request.PhoneNumber
-        });
+        var dto= mapper.Map<UpdateStudentDto>(request);
+        var updatedStudent = await studentService.UpdateAsync(dto);
+        if (updatedStudent == null)
+            return NotFound();
         return Ok(updatedStudent);
     }
     

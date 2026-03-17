@@ -10,6 +10,8 @@ public class StudentService(IStudentRepository studentRepository) : IStudentServ
 {
     public async Task<List<StudentDto>> GetAllAsync()
     {
+        // Student -> StudentDto mapping yapilacak
+        
         var students = await studentRepository.GetAllAsync();
         
         return students.Select(s => new StudentDto 
