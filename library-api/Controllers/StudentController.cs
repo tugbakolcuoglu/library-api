@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication2.DTOs;
+using WebApplication2.Models.DTOs;
+using WebApplication2.Models.VMs;
 using WebApplication2.Services.Interfaces;
 using WebApplication2.VMs;
 
@@ -27,7 +29,7 @@ public class StudentController(IStudentService studentService, IMapper mapper) :
         var student = await studentService.GetByIdAsync(id);
         if (student == null)
             return NotFound();
-        
+
         var studentVm = mapper.Map<StudentDetailResponseVm>(student);
 
         return Ok(studentVm);
@@ -37,14 +39,13 @@ public class StudentController(IStudentService studentService, IMapper mapper) :
     public async Task<IActionResult> GetStudentByEmail(string email)
     {
         var students = await studentService.GetByEmailAsync(email);
-        if (students == null)
-            return NotFound();
+
         var studentsVm = mapper.Map<List<StudentResponseVm>>(students);
         return Ok(studentsVm);
     }
-    
+
     [HttpPost]
-    public async Task<IActionResult> CreateStudent(CreateStudentRequestVm request)  
+    public async Task<IActionResult> CreateStudent(CreateStudentRequestVm request)
     {
         var dto = mapper.Map<CreateStudentDto>(request);
         var createdStudent = await studentService.CreateAsync(dto);
@@ -56,13 +57,13 @@ public class StudentController(IStudentService studentService, IMapper mapper) :
     [HttpPut]
     public async Task<IActionResult> UpdateStudent(UpdateStudentRequestVm request)
     {
-        var dto= mapper.Map<UpdateStudentDto>(request);
+        var dto = mapper.Map<UpdateStudentDto>(request);
         var updatedStudent = await studentService.UpdateAsync(dto);
         if (updatedStudent == null)
             return NotFound();
         return Ok(updatedStudent);
     }
-    
+
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteStudent(Guid id)
     {

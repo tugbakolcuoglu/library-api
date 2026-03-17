@@ -27,6 +27,7 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));// AutoMapper registratio
 //LibraryService'ı bağımlılık enjeksiyonuna ekliyoruz, böylece controller'larda kullanabiliriz.
 
 builder.Services.AddScoped<ILibraryService,LibraryService>();
+builder.Services.AddScoped<IAssignmentHistoryRepository, AssignmentHistoryRepository>();
 
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IBookService, BookService>();

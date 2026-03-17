@@ -1,6 +1,7 @@
 using AutoMapper;
 using WebApplication2.DTOs;
 using WebApplication2.Entities;
+using WebApplication2.Models.DTOs;
 using WebApplication2.Models.Entities;
 using WebApplication2.Models.VMs;
 using WebApplication2.VMs;
@@ -52,15 +53,19 @@ public class MappingProfile : Profile
         #region Student-DTO-Mapping
 
         CreateMap<Student, StudentDto>().ReverseMap();
+        
         CreateMap<AssignmentHistory, StudentHistoryItemDto>()
             .ForMember(dest => dest.AssignmentHistoryId, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.BookTitle, opt => opt.MapFrom(src => src.Book.Title))
             .ForMember(dest => dest.BookAuthor, opt => opt.MapFrom(src => src.Book.Author))
             .ReverseMap();
+        
         CreateMap<Student, StudentDetailDto>().ReverseMap();
+        
         CreateMap<CreateStudentDto, Student>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
             .ReverseMap();
+        
         CreateMap<UpdateStudentDto, Student>();
 
         #endregion
@@ -72,6 +77,23 @@ public class MappingProfile : Profile
         CreateMap<StudentDetailDto, StudentDetailResponseVm>().ReverseMap();
         CreateMap<CreateStudentRequestVm, CreateStudentDto>().ReverseMap();
         CreateMap<UpdateBookRequestVm, UpdateStudentDto>().ReverseMap();
+
+        #endregion
+
+
+        #region Library-VM-Mapping
+
+        CreateMap<BorrowBookRequestVm, BorrowBookDto>().ReverseMap();
+        
+        CreateMap<LoanResultDto, LoanResultVm>().ReverseMap();
+        
+        CreateMap<ReturnBookRequestVm, ReturnBookDto>().ReverseMap();
+        
+        CreateMap<AssignmentHistory, LoanResultDto>()
+            .ForMember(dest => dest.AssignmentHistoryId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.ReturnedDate == null))
+            .ReverseMap();
+            
 
         #endregion
     }

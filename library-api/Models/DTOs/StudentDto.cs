@@ -1,4 +1,4 @@
-namespace WebApplication2.DTOs;
+namespace WebApplication2.Models.DTOs;
 
 public class StudentDto
 {

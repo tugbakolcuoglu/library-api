@@ -1,4 +1,5 @@
 using WebApplication2.DTOs;
+using WebApplication2.Models.DTOs;
 
 namespace WebApplication2.Services.Interfaces;
 
