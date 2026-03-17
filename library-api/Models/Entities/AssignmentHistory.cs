@@ -1,7 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using WebApplication2.Models.Entities;
+﻿using WebApplication2.Entities;
 
-namespace WebApplication2.Entities;
+namespace WebApplication2.Models.Entities;
 
 public class AssignmentHistory
 {

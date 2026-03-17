@@ -47,9 +47,6 @@ public class BooksController(IBookService bookService, ILibraryService librarySe
         //         ReturnedDate = h.ReturnedDate
         //     }).ToList()
         // };
-        // // az once servis katmaninda yaptigimiz ayni islemi bu sefer DTO -> VM donusumu icin burda yaptik,
-        // // yine 2 farkli yontemle yapilabilir
-        // // isterinse history bilgisini BookDetailDto icinde doldurabiliriz, istersek de disarda doldurabiliriz, bu tamamen tercihe bagli
         
         #endregion
         
@@ -57,7 +54,7 @@ public class BooksController(IBookService bookService, ILibraryService librarySe
         var bookDetailVm = mapper.Map<BookDetailResponseVm>(bookDetailDto);
 
         return Ok(bookDetailVm);
-    }
+    }//history bilgisini bookdetaildto içinde doldurduk, o yüzden burada sadece dto'yu vm'ye dönüştürdük, history bilgisi de otomatik olarak gelmiş oldu
 
     [HttpPost]
     public async Task<IActionResult> CreateBook([FromBody] CreateBookRequestVm request)
@@ -74,7 +71,7 @@ public class BooksController(IBookService bookService, ILibraryService librarySe
     public async Task<IActionResult> UpdateBook(Guid id, [FromBody] UpdateBookRequestVm request)
     {
         if(id != request.Id)
-            return BadRequest("Id'ler eşleşmiyor");
+            return BadRequest("Id'ler eşleşmiyor");//url ve body deki id`ler uyuşmazsa badrequest döndürüyoruz
 
         var updateRequestDto = mapper.Map<UpdateBookDto>(request);
         

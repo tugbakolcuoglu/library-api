@@ -10,6 +10,6 @@ public interface IBookRepository
     Task<List<Book>> GetAllAsync();
     Task<Book?> GetByIdAsync(Guid id);
     Task AddAsync(Book book);
-    Task UpdateAsync(Book book);
+    Task<int> UpdateAsync(Book book);
     Task DeleteAsync(Book book);
 }

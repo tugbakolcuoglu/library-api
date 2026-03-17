@@ -125,8 +125,8 @@ public class BookService(IBookRepository bookRepository, IMapper mapper) : IBook
 
         #endregion 
         
-        return bookDetailDto; // olusturulan dto dondurulur
-    }
+        return bookDetailDto;
+    }// GetByIdAsync metodunda, kitap bulunamazsa null döndürüyoruz. Bulunursa detaylı bir DTO oluşturup döndürüyoruz.
 
     
     public async Task<BookDto> CreateAsync(CreateBookDto dto)

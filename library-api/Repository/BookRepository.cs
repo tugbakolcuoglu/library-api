@@ -25,7 +25,6 @@ public class BookRepository(AppDbContext context) : IBookRepository
     public async Task<Book?> GetByIdAsync(Guid id)
     {
         return await context.Books
-            .AsNoTracking()
             .Include(x=> x.AssignmentHistories)
                 .ThenInclude(x=> x.Student)
             .FirstOrDefaultAsync(x => x.Id == id);
@@ -41,7 +40,7 @@ public class BookRepository(AppDbContext context) : IBookRepository
         await context.SaveChangesAsync();
     }
 
-    public Task UpdateAsync(Book book)
+    public Task<int> UpdateAsync(Book book)
     {
         context.Books.Update(book);
         return context.SaveChangesAsync();
