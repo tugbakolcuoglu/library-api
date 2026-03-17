@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using WebApplication2.DTOs;
 using WebApplication2.Entities;
 using WebApplication2.Repository.Interfaces;
@@ -6,20 +7,22 @@ using WebApplication2.Services.Interfaces;
 
 namespace WebApplication2.Services;
 
-public class BookService(IBookRepository bookRepository) : IBookService
+public class BookService(IBookRepository bookRepository, IMapper mapper) : IBookService
 {
     public async Task<List<BookDto>> GetAllAsync()
     {
         var bookEntities = await bookRepository.GetAllAsync();
         
         // Book entitysini BookDto'ya dönüştür
-        var bookDtos = bookEntities.Select(book => new BookDto
-        {
-            Id = book.Id,
-            Title = book.Title,
-            Author = book.Author,
-            IsAvailable = book.IsAvailable
-        }).ToList();
+        // var bookDtos = bookEntities.Select(book => new BookDto
+        // {
+        //     Id = book.Id,
+        //     Title = book.Title,
+        //     Author = book.Author,
+        //     IsAvailable = book.IsAvailable
+        // }).ToList();
+
+        var bookDtos = mapper.Map<List<BookDto>>(bookEntities);
         
         return bookDtos;
 
@@ -36,21 +39,21 @@ public class BookService(IBookRepository bookRepository) : IBookService
 
         #region 1. Yontem -- History bilgisini icerde doldurmak
         
-        var bookDetailDto = new BookDetailDto
-        {
-            Id = bookEntity.Id,
-            Title = bookEntity.Title,
-            Author = bookEntity.Author,
-            IsAvailable = bookEntity.IsAvailable,
-            History = bookEntity.AssignmentHistories.Select(x=> new BookHistoryItemDto()
-            {
-                AssignmentHistoryId = x.Id,
-                StudentId = x.StudentId,
-                StudentFullName = $"{x.Student.Name} {x.Student.Surname}",
-                AssignedDate = x.AssignedDate,
-                ReturnedDate = x.ReturnedDate
-            }).ToList()
-        };
+        // var bookDetailDto = new BookDetailDto
+        // {
+        //     Id = bookEntity.Id,
+        //     Title = bookEntity.Title,
+        //     Author = bookEntity.Author,
+        //     IsAvailable = bookEntity.IsAvailable,
+        //     History = bookEntity.AssignmentHistories.Select(x=> new BookHistoryItemDto()
+        //     {
+        //         AssignmentHistoryId = x.Id,
+        //         StudentId = x.StudentId,
+        //         StudentFullName = $"{x.Student.Name} {x.Student.Surname}",
+        //         AssignedDate = x.AssignedDate,
+        //         ReturnedDate = x.ReturnedDate
+        //     }).ToList()
+        // };
 
 
         #endregion
@@ -115,6 +118,12 @@ public class BookService(IBookRepository bookRepository) : IBookService
         // bookDetailDto.History = historyDtoList;
 
         #endregion
+
+        #region 4.Yontem -- AutoMapper Ile History bilgisini doldurma (En Dogrusu)
+
+        var bookDetailDto =  mapper.Map<BookDetailDto>(bookEntity);
+
+        #endregion 
         
         return bookDetailDto; // olusturulan dto dondurulur
     }
@@ -122,22 +131,12 @@ public class BookService(IBookRepository bookRepository) : IBookService
     
     public async Task<BookDto> CreateAsync(CreateBookDto dto)
     {
-        var newBookEntity = new Book
-        {
-            Id = Guid.NewGuid(),
-            Title = dto.Title,
-            Author = dto.Author
-        };
-
+    
+        var newBookEntity = mapper.Map<Book>(dto);
+    
         await bookRepository.AddAsync(newBookEntity);
-
-        return new BookDto
-        {
-            Id = newBookEntity.Id,
-            Title = newBookEntity.Title,
-            Author = newBookEntity.Author,
-            IsAvailable = newBookEntity.IsAvailable
-        };
+        
+        return mapper.Map<BookDto>(newBookEntity);
     }
 
     public async Task<BookDto?> UpdateAsync(UpdateBookDto dto)
@@ -146,19 +145,12 @@ public class BookService(IBookRepository bookRepository) : IBookService
 
         if (bookToUpdate == null)
             return null;
-
-        bookToUpdate.Title = dto.Title;
-        bookToUpdate.Author = dto.Author;
+        
+        mapper.Map(dto, bookToUpdate); // dto'daki bilgileri bookToUpdate entitysinin ilgili alanlarına kopyalar
 
         await bookRepository.UpdateAsync(bookToUpdate);
 
-        return new BookDto
-        {
-            Id = bookToUpdate.Id,
-            Title = bookToUpdate.Title,
-            Author = bookToUpdate.Author,
-            IsAvailable = bookToUpdate.IsAvailable
-        };
+        return mapper.Map<BookDto>(bookToUpdate);
     }
 
     public async Task<bool> DeleteAsync(Guid id)

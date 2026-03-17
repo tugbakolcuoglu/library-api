@@ -1,4 +1,4 @@
-namespace WebApplication2.VMs;
+namespace WebApplication2.Models.VMs;
 
 public class BookResponseVm
 {
