@@ -1,52 +1,63 @@
-using Microsoft.EntityFrameworkCore; 
+using Microsoft.EntityFrameworkCore;
 using WebApplication2.Data;
-using WebApplication2.Models;
+using WebApplication2.Models.Entities;
 using WebApplication2.Repository;
 using WebApplication2.Repository.Interfaces;
 using WebApplication2.Services;
 using WebApplication2.Services.Interfaces;
+using System.Linq;
+using WebApplication2.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// CONTROLLERS + JSON
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-        options.JsonSerializerOptions.WriteIndented = true; 
+        options.JsonSerializerOptions.WriteIndented = true;
     });
 
-builder.Services.AddOpenApi();
+// SWAGGER
+builder.Services.AddEndpointsApiExplorer();
 
+// DB
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-//AppDbContext'i SQL Server veritabanına bağlamak için yapılandırıyoruz, bağlantı dizesi appsettings.json dosyasından alınır.
 
-builder.Services.AddAutoMapper(typeof(MappingProfile));// AutoMapper registration
+// AUTOMAPPER
+builder.Services.AddAutoMapper(typeof(Program));
 
-
-//LibraryService'ı bağımlılık enjeksiyonuna ekliyoruz, böylece controller'larda kullanabiliriz.
-
-builder.Services.AddScoped<ILibraryService,LibraryService>();
-builder.Services.AddScoped<IAssignmentHistoryRepository, AssignmentHistoryRepository>();
-
-builder.Services.AddScoped<IBookRepository, BookRepository>();
+// SERVICES
+builder.Services.AddScoped<ILibraryService, LibraryService>();
 builder.Services.AddScoped<IBookService, BookService>();
-
-
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-
-builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IStudentService, StudentService>();
+
+// REPOSITORIES
+builder.Services.AddScoped<IAssignmentHistoryRepository, AssignmentHistoryRepository>();
+builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+
+// CORS (frontend için)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
+// MIDDLEWARE
 app.UseHttpsRedirection();
+
+app.UseCors("AllowFrontend");
 
 app.UseAuthorization();
 
