@@ -11,7 +11,6 @@ public class BookRepository(AppDbContext context) : IBookRepository
     {
         return await context.Books
             .AsNoTracking()
-            .Include(x=> x.AssignmentHistories)
             .ToListAsync(); 
         // database'deki butun kitaplari liste yapip ceker.
         // asNoTracking() ile çekilen veriler üzerinde değişiklik yapılmaz, sadece okunur.
