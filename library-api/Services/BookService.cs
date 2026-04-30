@@ -12,20 +12,16 @@ public class BookService(IBookRepository bookRepository, IMapper mapper) : IBook
     public async Task<List<BookDto>> GetAllAsync()
     {
         var bookEntities = await bookRepository.GetAllAsync();
-        
-        // Book entitysini BookDto'ya dönüştür
-        // var bookDtos = bookEntities.Select(book => new BookDto
-        // {
-        //     Id = book.Id,
-        //     Title = book.Title,
-        //     Author = book.Author,
-        //     IsAvailable = book.IsAvailable
-        // }).ToList();
 
-        var bookDtos = mapper.Map<List<BookDto>>(bookEntities);
-        
+        var bookDtos = bookEntities.Select(book => new BookDto
+        {
+            Id = book.Id,
+            Title = book.Title,
+            Author = book.Author,
+            IsAvailable = !book.AssignmentHistories.Any(x => x.ReturnedDate == null)
+        }).ToList();
+
         return bookDtos;
-
     }
 
     public async Task<BookDetailDto?> GetByIdAsync(Guid id)

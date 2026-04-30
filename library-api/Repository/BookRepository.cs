@@ -11,14 +11,8 @@ public class BookRepository(AppDbContext context) : IBookRepository
     {
         return await context.Books
             .AsNoTracking()
-            .ToListAsync(); 
-        // database'deki butun kitaplari liste yapip ceker.
-        // asNoTracking() ile çekilen veriler üzerinde değişiklik yapılmaz, sadece okunur.
-        // Bu performansı artırır çünkü Entity Framework bu verileri izlemeye çalışmaz.
-        // sadece kitapların temel bilgilerini çekmek istiyoruz, bir degisiklik yapilmayacak bu yuzden AsNoTracking ile Entity Framework'e bu verileri izleme diyoruz
-        
-        // Neden assignementHistory'i de dahil ediyoruz?
-        // Cunku kitaplarin isAvalilabe bilgisini ogrenmek icin history kayitlarinda returned date'i null olan bir kayit var mi yok mu ona bakacagiz, 
+            .Include(x => x.AssignmentHistories)
+            .ToListAsync();
     }
 
     public async Task<Book?> GetByIdAsync(Guid id)
