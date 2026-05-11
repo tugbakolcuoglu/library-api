@@ -25,7 +25,9 @@ public class AssignmentHistoryRepository(AppDbContext dbContext) : IAssignmentHi
 
     public Task<int> DeleteHistoryByStudentIdAsync(Guid studentId)
     {
-        dbContext.AssignmentHistories.RemoveRange(dbContext.AssignmentHistories.Where(h => h.StudentId == studentId));
+        var studentHistories = dbContext.AssignmentHistories.Where(h => h.StudentId == studentId);
+        
+        dbContext.AssignmentHistories.RemoveRange(studentHistories);
         return dbContext.SaveChangesAsync();
     }
 }
