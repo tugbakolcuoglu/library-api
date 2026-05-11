@@ -20,5 +20,12 @@ public class AssignmentHistoryRepository(AppDbContext dbContext) : IAssignmentHi
         return await dbContext.SaveChangesAsync() > 0 
             ? history 
             : null;
-    }//var olan bir atama geçmişini günceller, başarılı olursa güncellenmiş geçmişi döndürür, başarısız olursa null döndürür
+    }
+    //var olan bir atama geçmişini günceller, başarılı olursa güncellenmiş geçmişi döndürür, başarısız olursa null döndürür
+
+    public Task<int> DeleteHistoryByStudentIdAsync(Guid studentId)
+    {
+        dbContext.AssignmentHistories.RemoveRange(dbContext.AssignmentHistories.Where(h => h.StudentId == studentId));
+        return dbContext.SaveChangesAsync();
+    }
 }

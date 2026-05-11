@@ -6,4 +6,5 @@ public interface IAssignmentHistoryRepository
 {
     public Task<AssignmentHistory?> CreateHistoryAsync(AssignmentHistory history);
     public Task<AssignmentHistory?> UpdateHistoryAsync(AssignmentHistory history);
+    public Task<int> DeleteHistoryByStudentIdAsync(Guid studentId);
 }

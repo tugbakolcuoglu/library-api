@@ -50,6 +50,9 @@ public class StudentController(IStudentService studentService, IMapper mapper) :
         var createdStudent = await studentService.CreateAsync(dto);
 
         var studentVm = mapper.Map<StudentResponseVm>(createdStudent);
+
+        var studenDto = studentVm.ToDto();
+        
         return Ok(studentVm);
     }//kullanıcıdan requestVm geliyor, bunu create DTO'ya dönüştürüyoruz, servis katmanına gönderiyoruz, oluşturulan öğrenci DTO'sunu tekrar öğrenci VM'sine dönüştürüp döndürüyoruz
 

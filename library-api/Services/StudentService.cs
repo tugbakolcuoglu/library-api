@@ -8,7 +8,7 @@ using WebApplication2.Services.Interfaces;
 
 namespace WebApplication2.Services;
 
-public class StudentService(IStudentRepository studentRepository, IMapper mapper) : IStudentService
+public class StudentService(IStudentRepository studentRepository, IAssignmentHistoryRepository historyRepository,IMapper mapper) : IStudentService
 {
     public async Task<List<StudentDto>> GetAllAsync()
     {
@@ -30,8 +30,9 @@ public class StudentService(IStudentRepository studentRepository, IMapper mapper
     public async Task<StudentDetailDto?> GetByIdAsync(Guid id)
     {
         var student = await studentRepository.GetByIdAsync(id);
+        if(student == null) return null;
 
-        if (student == null) return null;
+      
 
         var studentDetailDto = mapper.Map<StudentDetailDto>(student);
         return studentDetailDto;
@@ -62,11 +63,15 @@ public class StudentService(IStudentRepository studentRepository, IMapper mapper
     public async Task<bool> DeleteAsync(Guid id)
     {
         var student = await studentRepository.GetByIdAsync(id);
-
         if (student == null) return false;
+        
+        var hasUnreturnedBooks = student.AssignmentHistories.Any(x=> x.ReturnedDate == null);
+        if(hasUnreturnedBooks) return false;
+        
+        await historyRepository.DeleteHistoryByStudentIdAsync(id);
 
         await studentRepository.DeleteAsync(student);
-
+        
         return true;
-    }//öğrenci bulunamazsa false döndürüyoruz, bulunursa siliyoruz ve true döndürüyoruz
+    }//öğrenci bulunamazsa false döndürüyoruz,bulunursa ama odunc alinmis kitap varsa yine false donuyoruz. diger durumlarda alinmis kitap listesini temizleyip sonra ogrenciyi siliyoruz, yoksa sql hata verir
 }

@@ -1,3 +1,5 @@
+using WebApplication2.Models.DTOs;
+
 namespace WebApplication2.Models.VMs;
 
 public class StudentResponseVm
@@ -7,6 +9,19 @@ public class StudentResponseVm
     public string Surname { get; set; } = null!;
     public string PhoneNumber { get; set; } = null!;
     public string Email { get; set; } = null!;
+
+
+    public StudentDto ToDto()
+    {
+        return new StudentDto()
+        {
+            Id = this.Id,
+            Name = this.Name,
+            Surname = this.Surname,
+            PhoneNumber = this.PhoneNumber,
+            Email = this.Email
+        };
+    }
 }
 
 public class CreateStudentRequestVm
