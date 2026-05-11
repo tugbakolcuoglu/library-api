@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using WebApplication2.Data;
 using WebApplication2.Models.Entities;
 using WebApplication2.Repository.Interfaces;
@@ -23,11 +24,13 @@ public class AssignmentHistoryRepository(AppDbContext dbContext) : IAssignmentHi
     }
     //var olan bir atama geçmişini günceller, başarılı olursa güncellenmiş geçmişi döndürür, başarısız olursa null döndürür
 
-    public Task<int> DeleteHistoryByStudentIdAsync(Guid studentId)
+    public async Task<int> DeleteHistoryByStudentIdAsync(Guid studentId)
     {
         var studentHistories = dbContext.AssignmentHistories.Where(h => h.StudentId == studentId);
         
         dbContext.AssignmentHistories.RemoveRange(studentHistories);
-        return dbContext.SaveChangesAsync();
+        
+        return await dbContext.SaveChangesAsync();
+        
     }
 }
